@@ -21,6 +21,12 @@ Once a file is loaded, calling Resolve will:
 When using either of the first two forms, you will (likely) need to provide a search URI for referenced files, such as
 textures or binary vertex data. Resolve accepts a slice of strings to allow searching multiple paths.
 
+## Development Status
+
+This package is working for loading of models and has partial support for cameras. It is not currently handling
+textures, animations, etc. Features are being implemented in conjunction with development of
+[https://github.com/bbredesen/gltf-viewer](a glTF model viewer) written in Go.
+
 # License
 MIT license. See the LICENSE file.
 
