@@ -25,7 +25,7 @@ textures or binary vertex data. Resolve accepts a slice of strings to allow sear
 
 This package is working for loading of models and has partial support for cameras. It is not currently handling
 textures, animations, etc. Features are being implemented in conjunction with development of
-[https://github.com/bbredesen/gltf-viewer](a glTF model viewer) written in Go.
+[a glTF model viewer](https://github.com/bbredesen/gltf-viewer) written in Go.
 
 # License
 MIT license. See the LICENSE file.
