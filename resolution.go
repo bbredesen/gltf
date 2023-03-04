@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+
+	"github.com/bbredesen/vkm"
 )
 
 // TODO: resolve's probably need error checking for indexing issues...e.g. scene references a node index that doesn't
@@ -48,6 +50,14 @@ func (gltf *GlTF) Resolve(uriSearchPath []string) (*ResolvedGlTF, error) {
 			return rval, err
 		} else {
 			rval.Accessors = append(rval.Accessors, rac)
+		}
+	}
+
+	for i := range gltf.Cameras {
+		if rc, err := gltf.Cameras[i].resolve(rval); err != nil {
+			return rval, err
+		} else {
+			rval.Cameras = append(rval.Cameras, rc)
 		}
 	}
 
@@ -113,6 +123,10 @@ func (node *Node) resolve(root *ResolvedGlTF) (ResolvedNode, error) {
 		Node: node,
 	}
 
+	if node.Camera != nil {
+		rval.Camera = &root.Cameras[*node.Camera]
+	}
+
 	rval.Children = make([]*ResolvedNode, len(node.Children))
 
 	if node.Mesh != nil {
@@ -164,6 +178,24 @@ func (a *Accessor) resolve(root *ResolvedGlTF) (ResolvedAccessor, error) {
 	}
 
 	rval.BufferView = &root.BufferViews[a.BufferView]
+
+	return rval, nil
+}
+
+func (c *Camera) resolve(root *ResolvedGlTF) (ResolvedCamera, error) {
+	rval := ResolvedCamera{
+		Camera: c,
+	}
+
+	if c.Type == PERSPECTIVE {
+		rval.ProjMatrix = vkm.GlTFPerspective(c.Perspective.Yfov, c.Perspective.AspectRatio, c.Perspective.Znear, c.Perspective.Zfar)
+	} else if c.Type == ORTHOGRAPHIC {
+		rval.ProjMatrix = vkm.GlTFOrthoProjection(c.Orthographic.Xmag, c.Orthographic.Ymag, c.Orthographic.Znear, c.Orthographic.Zfar)
+	} else if c.Type == "" {
+		return rval, errors.New("Camera type not set on camera node")
+	} else {
+		return rval, errors.New("Camera type not recognized: " + string(c.Type))
+	}
 
 	return rval, nil
 }

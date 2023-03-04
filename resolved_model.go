@@ -1,5 +1,7 @@
 package gltf
 
+import "github.com/bbredesen/vkm"
+
 // ResolvedGlTF is a GlTF with all indexed node references and binary data resolved and loaded. The source GlTF struct
 // is included as a pointer, so all of the source data can be referenced as neccessary. Fields for resolved data types
 // are named the same as the sources in a GlTF struct, masking the original data. The original data can still be
@@ -16,6 +18,7 @@ type ResolvedGlTF struct {
 	Animations  []ResolvedAnimation
 	Buffers     []ResolvedBuffer
 	BufferViews []ResolvedBufferView
+	Cameras     []ResolvedCamera
 	Accessors   []ResolvedAccessor
 	Materials   []ResolvedMaterial
 	Meshes      []ResolvedMesh
@@ -25,8 +28,14 @@ type ResolvedGlTF struct {
 	Scenes []ResolvedScene
 }
 
+type ResolvedCamera struct {
+	*Camera
+	ProjMatrix vkm.Mat
+}
+
 type ResolvedNode struct {
 	*Node
+	Camera   *ResolvedCamera
 	Children []*ResolvedNode
 	Mesh     *ResolvedMesh
 }
